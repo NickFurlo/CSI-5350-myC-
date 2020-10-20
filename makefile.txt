@@ -1,0 +1,23 @@
+
+
+RM = /bin/rm -f
+
+
+myC.o: myC.cpp myC.h
+	g++ -c myC.cpp
+
+y.tab.o: myC.yacc
+	bison -d -t -y myC.yacc
+	g++ -O2 y.tab.c -c 
+
+lex.yy.o: myC.lex
+	flex -8 myC.lex
+	g++ -O2 lex.yy.c -c 
+
+myC: y.tab.o lex.yy.o myC.o
+	g++ -O2 lex.yy.o y.tab.o imp.o -o imp 
+
+
+
+clean:
+	/bin/rm -f lex.yy.* y.tab.* *.o myC

@@ -1,0 +1,23 @@
+float a=10.5;
+float b=4.33;
+float c=5.2;
+char greatest;
+
+if(a>b){
+	if(a>c){
+		greatest=x;
+	}
+	else{
+		greatest=z;
+	}
+}
+else{
+	if (b>c){
+		greatest=y;
+	}
+	else{
+		greatest=z;
+	}
+}
+
+print greatest;

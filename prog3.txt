@@ -1,0 +1,16 @@
+int a=7;
+int count=0;
+int temp;
+int fib1=0;
+int fib2=1;
+
+
+while(count<a){
+	temp=fib2;
+	fib2=fib2+fib1;
+	fib1=temp;
+	
+	print fib2;
+	
+	count=count+1;
+}

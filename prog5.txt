@@ -1,0 +1,13 @@
+string hi(string l, string r){
+	string z;
+	z=l+r;
+	return z;
+}
+
+string h=hello;
+string w=world;
+string out;
+
+
+out=hi(h, w);
+print out;
