@@ -86,19 +86,21 @@ void yyerror(const char* s);
 
 %%
 
-program : stmt { root = $$; }
+program : stmtlist { root = $$; }
 ;
-/*
-stmt : func_dec { $$ = $1;   }
-         |  func_call { $$ = $1;   }
-         |  loop { $$ = $1;   }
-	 |  if_stmt { $$ = $1;   }
-	 |  var_dec { $$ = $1;   }
-	 |	array_dec { $$ = $1; }    //todo no array_dec_node
-	 |  assignexpr { $$ = $1;   }
-	 |  boolexpr { $$ = $1;   }
+
+stmtlist : stmtlist SEMICOLON stmt
+            { // copy up the list and add the stmt to it
+              $$ = new sequence_stmt($1,$3);
+            }
+         | stmtlist SEMICOLON error
+	   { // just copy up the stmtlist when an error occurs
+             $$ = $1;
+             yyclearin; } 
+         |  stmt 
+	 { $$ = $1;   }
 ;
-*/
+
 stmt : loop { $$ = $1;   }
 	 |  if_stmt { $$ = $1;   }
 	 |  var_dec { $$ = $1;   }
@@ -108,8 +110,7 @@ stmt : loop { $$ = $1;   }
 ;
 
 //Simplified declarations
-var_dec : typename ID { $$ = new var_dec_node($1, $2);} //var_dec_node is overloaded
-		| typename ID EQUALS boolexpr { $$ = new var_dec_assign_node($1, $2, $4); }
+var_dec : typename ID { $$ = new var_dec_node($1, $2);} 
 ;
 
 array_dec : typename ID LBRACKET dimension RBRACKET { $$ = new array_dec_node($1, $2, $4); } //array_dec_node is overloaded
@@ -221,7 +222,7 @@ func_param_list: boolexpr{ $$ = $1; }
 */
 
 assignexpr : ID EQUALS assignroot {$$ = new assign_node($1, $3); }
-		| ID LBRACKET dimension RBRACKET EQUALS assignroot { $$ = new assign_node( $1, $6); }
+		| ID LBRACKET dimension RBRACKET EQUALS assignroot { $$ = new assign_node( $1, $6, $3); }
 ;
 
 assignroot : boolexpr {$$=$1; } 
@@ -239,7 +240,9 @@ int main(int argc, char **argv)
 
   cout << "---------- list of input program------------" << endl << endl;
 
-  root -> print();
+  root -> labelling(1);
+
+  root -> print(); cout<< endl;
 
   cout << "---------- exeuction of input program------------" << endl << endl;
   

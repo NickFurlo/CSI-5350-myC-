@@ -9,21 +9,12 @@ using namespace std;
 
 
 class exp_node{
+	/*
 	public:
 		virtual void print();
-		//virtual void evaluate();
+		virtual void evaluate();
+		*/
 };
-
-class int_exp_node {
-	public:
-
-    // print function for pretty printing an expression
-    virtual void print() = 0;
-
-    // evaluation function for a leaf, replaced for interior nodes
-    virtual int evaluate();
-};
-
 
 class float_exp_node:public exp_node{
 	public:
@@ -52,35 +43,35 @@ class char_exp_node:public exp_node{
 };
 
 
-class binaryOp_node : public exp_node {
+class float_binaryOp_node : public float_exp_node {
 public:
-    exp_node *left;
-    exp_node *right;
+    float_exp_node *left;
+    float_exp_node *right;
 
-  // the constructor for node links the node to its children,
-  // and stores the character representation of the operator.
-    binaryOp_node(exp_node *L, exp_node *R);
+    float_binaryOp_node(float_exp_node *L, float_exp_node *R);
 };
-/*
+
 class string_binaryOp_node : public string_exp_node {
 public:
     string_exp_node *left;
     string_exp_node *right;
 
-  // the constructor for node links the node to its children,
-  // and stores the character representation of the operator.
-    string_binaryOp_node(exp_node *L, exp_node *R);
+    string_binaryOp_node(string_exp_node *L, string_exp_node *R);
 };
 class bool_binaryOp_node : public bool_exp_node {
 public:
     bool_exp_node *left;
     bool_exp_node *right;
 
-  // the constructor for node links the node to its children,
-  // and stores the character representation of the operator.
-    bool_binaryOp_node(exp_node *L, exp_node *R);
+    bool_binaryOp_node(bool_exp_node *L, bool_exp_node *R);
 };
-*/
+class cond_binaryOp_node : public bool_exp_node {
+public:
+    float_exp_node *left;
+    float_exp_node *right;
+
+    cond_binaryOp_node(float_exp_node *L, float_exp_node *R);
+};
 
 class int_node : public int_exp_node{
 	private:
@@ -151,7 +142,7 @@ class neg_node : public float_exp_node {
 };
 
 // add_node inherits the characteristics of node and adds its own evaluate function
-class add_node : public binaryOp_node {
+class add_node : public float_binaryOp_node {
   public:
 
   // add_node's constructor just uses node's constructor
@@ -162,7 +153,7 @@ class add_node : public binaryOp_node {
 
 
 // subtract_node inherits the characteristics of node and adds its own evaluate function
-class subtract_node : public binaryOp_node {
+class subtract_node : public float_binaryOp_node {
   public:
 
   subtract_node(float_exp_node *L, float_exp_node *R);
@@ -172,7 +163,7 @@ class subtract_node : public binaryOp_node {
 
 
 // multiply_node inherits the characteristics of node and adds its own evaluate function
-class multiply_node : public binaryOp_node {
+class multiply_node : public float_binaryOp_node {
   public:
 
   multiply_node(float_exp_node *L, float_exp_node *R);
@@ -182,7 +173,7 @@ class multiply_node : public binaryOp_node {
 
 
 // divide_node inherits the characteristics of node and adds its own evaluate function
-class divide_node : public binaryOp_node {
+class divide_node : public float_binaryOp_node {
   public:
 
   divide_node(float_exp_node *L, float_exp_node *R);
@@ -193,7 +184,7 @@ class divide_node : public binaryOp_node {
 //`````````````````````````````````````
 
 //OR
-class or_node : public binaryOp_node{
+class or_node : public bool_binaryOp_node{
 	public:
 	
 	or_node(bool_exp_node *L, bool_exp_node *R);
@@ -202,7 +193,7 @@ class or_node : public binaryOp_node{
 };
 
 //AND
-class and_node : public binaryOp_node{
+class and_node : public bool_binaryOp_node{
 	public:
 	
 	and_node(bool_exp_node *L, bool_exp_node *R);
@@ -210,26 +201,26 @@ class and_node : public binaryOp_node{
 	bool evaluate();
 };
 
-//equal
-class equal_node : public binaryOp_node{
+//equal. Takes in 2 float expressions and compares them
+class equal_node : public cond_binaryOp_node{
 	public:
 	
-	equal_node(exp_node *L, exp_node *R);
+	equal_node(float_exp_node *L, float_exp_node *R);
 	void print();
 	bool evaluate();
 };
 
 //not equal
-class notequal_node : public binaryOp_node{
+class notequal_node : public cond_binaryOp_node{
 	public:
 	
-	notequal_node(exp_node *L, exp_node *R);
+	notequal_node(float_exp_node *L, float_exp_node *R);
 	void print();
 	bool evaluate();
 };
 
 //less than
-class less_node : public binaryOp_node{
+class less_node : public cond_binaryOp_node{
 	public:
 	
 	less_node(float_exp_node *L, float_exp_node *R);
@@ -238,7 +229,7 @@ class less_node : public binaryOp_node{
 };
 
 //greater than
-class greater_node : public binaryOp_node{
+class greater_node : public cond_binaryOp_node{
 	public:
 	
 	greater_node(float_exp_node *L, float_exp_node *R);
@@ -247,7 +238,7 @@ class greater_node : public binaryOp_node{
 };
 
 //less than equal
-class lessequal_node : public binaryOp_node{
+class lessequal_node : public cond_binaryOp_node{
 	public:
 	
 	lessequal_node(float_exp_node *L, float_exp_node *R);
@@ -256,7 +247,7 @@ class lessequal_node : public binaryOp_node{
 };
 
 //greater than equal
-class greaterequal_node : public binaryOp_node{
+class greaterequal_node : public cond_binaryOp_node{
 	public:
 	
 	greaterequal_node(float_exp_node *L, float_exp_node *R);
@@ -267,7 +258,7 @@ class greaterequal_node : public binaryOp_node{
 //negation
 class negation_node : public bool_exp_node {
  protected:
-  exp_node *exp;
+  bool_exp_node *exp;
  public:
   negation_node(bool_exp_node *exp);
   void print();
@@ -275,7 +266,7 @@ class negation_node : public bool_exp_node {
 };
 
 //exponentiation
-class expo_node : public binaryOp_node{
+class expo_node : public float_binaryOp_node{
 	public:
 	
 	expo_node(float_exp_node *L, float_exp_node *R);
@@ -283,7 +274,7 @@ class expo_node : public binaryOp_node{
 	float evaluate();
 };
 //string concatenation
-class concatenate_node : public binaryOp_node{
+class concatenate_node : public string_binaryOp_node{
 	public:
 	
 	concatenate_node(string_exp_node *L, string_exp_node *R);
@@ -291,43 +282,7 @@ class concatenate_node : public binaryOp_node{
 	string evaluate();
 };
 
-//if-then
-class if_node : public binaryOp_node{  //If-then-else is not a binary node, its actually trinary. Modify?
-	public:
-	
-	if_node(exp_node *L, exp_node *R);
-	void print();
-	void evaluate();
-};
-
-//Used to define if-then-else
-class trinaryOp_node : public exp_node {
-	public:
-		exp_node *left;
-		exp_node *middle;
-		exp_node *right;
-
-  // the constructor for node links the node to its children,
-  // and stores the character representation of the operator.
-    trinaryOp_node(exp_node *L, exp_node *M, exp_node *R);
-};
-//if-then-else. This is like the matched if stmt in the grammar.
-class if_else_node : public trinaryOp_node{  //If-then-else is not a binary node, its actually trinary. Modify?
-	public:
-	
-	if_else_node(exp_node *L, exp_node *M,  exp_node *R);
-	void print();
-	void evaluate();
-};
-
-//loop
-class loop_node : public binaryOp_node{
-	public:
-		loop_node(exp_node *L, exp_node *R);
-		void print();
-		void evaluate();
-};
-/*
+/* Things that need to be stored: type, name, parameter and their type, expression 
 //--------------------------------------------------
 class func_dec_node : public stmt_node{
 	protected:
@@ -365,7 +320,69 @@ class func_param_list :
 */
 //-----------------------------------------------------
 
-class var_dec_node : public stmt_node {
+typedef int TLABEL;
+class basic_block{
+	protected: TLABEL mylabel;
+};
+
+class test: public basic_block{
+	private:
+		bool_exp_node *condition;
+	public:
+		test(bool_exp_node * condition);
+		void print();
+		bool evaluate();
+		TLABEL labelling(TLABEL next){mylabel=next; return next+1;}
+};
+
+class stmt_node {
+ public:
+  virtual void print();
+  virtual void evaluate() = 0;
+  virtual TLABEL labelling(TLABEL next) =0;
+};
+
+//``````````````````````````````````````````````````
+
+//if-then
+class if_node : public stmt_node{  //If-then-else is not a binary node, its actually trinary. Modify?
+	protected:
+		test *condition;
+		stmt_node *thenbranch;
+	public:
+		if_node(test *condition, stmt_node *thenbranch);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL);
+};
+
+//if-then-else. This is like the matched if stmt in the grammar.
+class if_else_node : public stmt_node{ 
+	protected:
+		test *condition;
+		stmt_node *thenbranch, *elsebranch;
+	public:
+		if_else_node(test *condition, stmt_node *thenbranch, stmt_node *elsebranch);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL);
+};
+
+//loop
+class loop_node : public stmt_node{
+	protected:
+		test *condition;
+		stmt_node *bodystmt;
+	public:
+		loop_node(test *condition, stmt_node *bodystmt);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL);
+};
+//`````````````````````````````````````
+
+
+class var_dec_node : public stmt_node, public basic_block {
 	protected:
 		string type;
 		string id;
@@ -374,8 +391,9 @@ class var_dec_node : public stmt_node {
 		var_dec_node(string tpe, string nme);
 		void print();
 		void evaluate();
+		TLABEL labelling(TLABEL next) { mylabel = next; return next+1;}
 };
-
+/*
 class var_dec_assign_node : public stmt_node {
 	protected:
 		string type;
@@ -386,10 +404,11 @@ class var_dec_assign_node : public stmt_node {
 		var_dec_assign_node(string tpe, string nme, exp_node *exp);
 		void print();
 		void evaluate();
+		TLABEL labelling(TLABEL next) { mylabel = next; return next+1;}
 };
+*/
 
-
-class array_dec_node: public stmt_node {
+class array_dec_node: public stmt_node, public basic_block {
 	protected:
 		string type;
 		string id;
@@ -398,42 +417,83 @@ class array_dec_node: public stmt_node {
 		array_dec_node(string tpe, string nme, int dim);
 		void print();
 		void evaluate();
+		TLABEL labelling(TLABEL next) { mylabel = next; return next+1;}
 	
 };
-
-//`````````````````````````````````````
-
-class stmt_node {
- public:
-  virtual void print();
-  virtual void evaluate() = 0;
+/*
+class float_assign_node : public stmt_node, public basic_block {
+	protected:
+		string id;
+		float_exp_node *expression;
+		int dimension;
+	public:
+		float_assign_node(string name, float_exp_node *expr, int dim);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL next) {mylabel = next; return next+1;}  
 };
 
-class assign_node : public stmt_node {
+class string_assign_node : public stmt_node, public basic_block {
+	protected:
+		string id;
+		string_exp_node *expression;
+		int dimension;
+	public:
+		string_assign_node(string name, string_exp_node *expr, int dim);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL next) {mylabel = next; return next+1;}  
+};
+*/
+class float_assign_node : public stmt_node, public basic_block {
+	protected:
+		string id;
+		float_exp_node *expression;
+
+	public:
+		float_assign_node(string name, float_exp_node *expr);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL next) {mylabel = next; return next+1;}  
+};
+
+class string_assign_node : public stmt_node, public basic_block {
+	protected:
+		string id;
+		string_exp_node *expression;
+	public:
+		string_assign_node(string name, string_exp_node *expr);
+		void print();
+		void evaluate();
+		TLABEL labelling(TLABEL next) {mylabel = next; return next+1;}  
+};
+
+class float_print_node: public stmt_node, public basic_block {
  protected:
-  string id;
-  exp_node *expression;
-  int dimension;
+  float_exp_node *exp;
  public:
-  assign_node(string name, exp_node *expr, int dim);
+  float_print_node(float_exp_node *myexp);
   void print();
   void evaluate();
+   TLABEL labelling(TLABEL next) { mylabel = next; return next+1;}  
 };
 
-class print_node: public stmt_node {
+class string_print_node: public stmt_node, public basic_block {
  protected:
-  exp_node *exp;
+  string_exp_node *exp;
  public:
-  print_node(exp_node *myexp);
+  string_print_node(string_exp_node *myexp);
   void print();
   void evaluate();
+   TLABEL labelling(TLABEL next) { mylabel = next; return next+1;}  
 };
 
-class skip_node: public stmt_node {
+class skip_node: public stmt_node, public basic_block {
  public:
   skip_node();
   void print();
   void evaluate();
+    TLABEL labelling(TLABEL next) { mylabel = next; return next+1;}  
 };
 
 
@@ -444,8 +504,10 @@ class sequence_node: public stmt_node {
   sequence_node(stmt_node *mystmt1, stmt_node *mystmt2);
   void print();
   void evaluate();
+    TLABEL labelling(TLABEL);
 };
 
+/*
 // the object at the base of our tree
 //extern map<string, float> state;
 extern map<string, float*> state_f;
@@ -453,3 +515,4 @@ extern map<string, int*> state_i;
 extern map<string, char*> state_c;
 extern map<string, bool*> state_b;
 extern map<string, string*> state_s;
+*/
